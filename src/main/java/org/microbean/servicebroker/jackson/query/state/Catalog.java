@@ -18,6 +18,9 @@ package org.microbean.servicebroker.jackson.query.state;
 
 import java.net.URI;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -73,6 +76,11 @@ public abstract class Catalog {
         @JsonPropertyOrder({ "parameters" })
         public static abstract class InputParametersMixin {
 
+          @JsonCreator
+          InputParametersMixin(@JsonProperty("parameters") final Map<? extends String, ?> parameters) {
+            super();
+          }
+          
         }
         
       }
