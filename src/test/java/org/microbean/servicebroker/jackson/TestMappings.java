@@ -35,7 +35,10 @@ import com.fasterxml.jackson.databind.introspect.ClassIntrospector;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceInstance;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -67,6 +70,11 @@ public class TestMappings {
     assertNotNull(inputParametersPath);
     final InputParameters inputParameters = objectMapper.readValue(inputParametersPath.toUri().toURL(), InputParameters.class);
     assertNotNull(inputParameters);
+    testInputParameters(inputParameters);
+  }
+
+  private static final void testInputParameters(final InputParameters inputParameters) {
+    assertNotNull(inputParameters);
     final Map<? extends String, ?> parameters = inputParameters.getParameters();
     assertNotNull(parameters);
     assertFalse(parameters.isEmpty());
@@ -91,6 +99,20 @@ public class TestMappings {
 
   @Test
   public void testWriteInputParameters() throws IOException {
+    final InputParameters inputParameters = createInputParameters();
+    assertNotNull(inputParameters);
+
+    final String json = objectMapper.writeValueAsString(inputParameters);
+    assertNotNull(json);
+
+    final Path inputParametersPath = this.referenceFiles.resolve("inputParameters.json");
+    assertNotNull(inputParametersPath);
+    
+    final String expectedJson = new String(Files.readAllBytes(inputParametersPath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final InputParameters createInputParameters() {
     final Map<String, String> billingAccount = new LinkedHashMap<>();
     billingAccount.put("description", "Billing account number used to charge use of shared fake server.");
     billingAccount.put("type", "string");
@@ -103,18 +125,81 @@ public class TestMappings {
     parameters.put("type", "object");
     parameters.put("properties", properties);
 
-    final InputParameters inputParameters = new InputParameters(parameters);
+    return new InputParameters(parameters);
+  }
 
-    final String json = objectMapper.writeValueAsString(inputParameters);
+  @Test
+  public void testReadServiceInstance() throws IOException {
+    final Path serviceInstancePath = this.referenceFiles.resolve("serviceInstance.json");
+    assertNotNull(serviceInstancePath);
+    final ServiceInstance serviceInstance = objectMapper.readValue(serviceInstancePath.toUri().toURL(), ServiceInstance.class);
+    assertNotNull(serviceInstance);
+    testServiceInstance(serviceInstance);
+  }
+
+  private static final void testServiceInstance(final ServiceInstance serviceInstance) {
+    assertNotNull(serviceInstance);
+    final InputParameters create = serviceInstance.getCreate();
+    assertNotNull(create);
+    testInputParameters(create);
+    final InputParameters update = serviceInstance.getUpdate();
+    if (update != null) {
+      testInputParameters(update);
+    }
+  }
+
+  @Test
+  public void testWriteServiceInstance() throws IOException {
+    final ServiceInstance serviceInstance = createServiceInstance();
+    assertNotNull(serviceInstance);
+
+    final String json = objectMapper.writeValueAsString(serviceInstance);
     assertNotNull(json);
 
-    final Path inputParametersPath = this.referenceFiles.resolve("inputParameters.json");
-    assertNotNull(inputParametersPath);
+    final Path serviceInstancePath = this.referenceFiles.resolve("serviceInstance.json");
+    assertNotNull(serviceInstancePath);
     
-    final String expectedJson = new String(Files.readAllBytes(inputParametersPath), "UTF-8").trim();
-    assertEquals(expectedJson, json);
-    
+    final String expectedJson = new String(Files.readAllBytes(serviceInstancePath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
   }
+
+  private static final ServiceInstance createServiceInstance() {
+    final InputParameters inputParameters = createInputParameters();
+    assertNotNull(inputParameters);
+    return new ServiceInstance(inputParameters, null);
+  }
+
+  @Test
+  public void testReadSchema() throws IOException {
+    final Path schemaPath = this.referenceFiles.resolve("schema.json");
+    assertNotNull(schemaPath);
+    final Schema schema = objectMapper.readValue(schemaPath.toUri().toURL(), Schema.class);
+    assertNotNull(schema);
+    testSchema(schema);
+  }
+
+  private static final void testSchema(final Schema schema) {
+    assertNotNull(schema);
+    final ServiceInstance serviceInstance = schema.getServiceInstance();
+    assertNotNull(serviceInstance);
+    testServiceInstance(serviceInstance);
+    final ServiceBinding serviceBinding = schema.getServiceBinding();
+    assertNotNull(serviceBinding);
+    testServiceBinding(serviceBinding);
+  }
+
+  private static final void testServiceBinding(final ServiceBinding serviceBinding) {
+    assertNotNull(serviceBinding);
+    final InputParameters create = serviceBinding.getCreate();
+    assertNotNull(create);
+    testInputParameters(create);
+  }
+
+
+  /*
+   * Inner and nested classes.
+   */
+
 
   private static final class MixinResolver implements ClassIntrospector.MixInResolver {
     
@@ -137,7 +222,6 @@ public class TestMappings {
           } catch (final ClassNotFoundException cnfe) {
             returnValue = null;
           }
-          System.out.println("*** using " + returnValue + " for " + c);
         }
       }
       return returnValue;

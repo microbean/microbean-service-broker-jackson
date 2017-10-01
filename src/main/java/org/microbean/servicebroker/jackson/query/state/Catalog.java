@@ -29,6 +29,10 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceInstance;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters;
+
 public abstract class Catalog {
 
   @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
@@ -62,6 +66,13 @@ public abstract class Catalog {
         @JsonPropertyOrder({ "create", "update" })
         public static abstract class ServiceInstanceMixin {
 
+          @JsonCreator
+          ServiceInstanceMixin(@JsonProperty("create") final InputParameters create,
+                               @JsonProperty("update") final InputParameters update)
+          {
+            super();
+          }
+          
         }
 
         @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
@@ -69,6 +80,11 @@ public abstract class Catalog {
         @JsonPropertyOrder({ "create" })
         public static abstract class ServiceBindingMixin {
 
+          @JsonCreator
+          ServiceBindingMixin(@JsonProperty("create") final InputParameters create) {
+            super();
+          }
+          
         }
         
         @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
@@ -87,9 +103,15 @@ public abstract class Catalog {
 
       @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
       @JsonNaming(SnakeCaseStrategy.class)
-      @JsonPropertyOrder({ "serviceInstance", "serviceBinding" })
+      @JsonPropertyOrder({ "service_instance", "service_binding" })
       public static abstract class SchemaMixin {
 
+        @JsonCreator
+        SchemaMixin(@JsonProperty("service_instance") final ServiceInstance serviceInstance,
+                    @JsonProperty("service_binding") final ServiceBinding serviceBinding) {
+          super();
+        }
+        
       }
       
     }
