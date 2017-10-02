@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceInstance;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters;
@@ -118,9 +119,20 @@ public abstract class Catalog {
     
     @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
     @JsonNaming(SnakeCaseStrategy.class)
-    @JsonPropertyOrder({ "id", "name", "description", "metadata", "free", "bindable" })
+    @JsonPropertyOrder({ "name", "id", "description", "free", "metadata", "bindable", "schemas" })
     public static abstract class PlanMixin {
 
+      @JsonCreator
+      PlanMixin(@JsonProperty("id") final String id,
+                @JsonProperty("name") final String name,
+                @JsonProperty("description") final String description,
+                @JsonProperty("metadata") final Map<? extends String, String> metadata,
+                @JsonProperty("free") final boolean free,
+                @JsonProperty("bindable") final Boolean bindable,
+                @JsonProperty("schemas") final Schema schemas) {
+        super();
+      }
+      
     }
     
   }

@@ -24,7 +24,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +38,7 @@ import com.fasterxml.jackson.databind.introspect.ClassIntrospector;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding;
@@ -195,6 +199,141 @@ public class TestMappings {
     testInputParameters(create);
   }
 
+  @Test
+  public void testWriteSchema() throws IOException {
+    final Schema schema = createSchema();
+    assertNotNull(schema);
+
+    final String json = objectMapper.writeValueAsString(schema);
+    assertNotNull(json);
+
+    final Path schemaPath = this.referenceFiles.resolve("schema.json");
+    assertNotNull(schemaPath);
+    
+    final String expectedJson = new String(Files.readAllBytes(schemaPath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final Schema createSchema() {
+    final InputParameters serviceInstanceCreate = createInputParameters();
+    assertNotNull(serviceInstanceCreate);
+    final InputParameters serviceInstanceUpdate = createInputParameters();
+    assertNotNull(serviceInstanceUpdate);
+    final ServiceInstance serviceInstance = new ServiceInstance(serviceInstanceCreate, serviceInstanceUpdate);
+    final ServiceBinding serviceBinding = new ServiceBinding(createInputParameters());
+    assertNotNull(serviceBinding);
+    return new Schema(serviceInstance, serviceBinding);
+  }
+
+  @Test
+  public void testReadPlan() throws IOException {
+    final Path planPath = this.referenceFiles.resolve("plan.json");
+    assertNotNull(planPath);
+    final Plan plan = objectMapper.readValue(planPath.toUri().toURL(), Plan.class);
+    assertNotNull(plan);
+    testPlan(plan);
+  }
+
+  private static final void testPlan(final Plan plan) {
+    assertNotNull(plan);
+    assertEquals("fake-plan-1", plan.getName());
+    assertEquals("d3031751-XXXX-XXXX-XXXX-a42377d3320e", plan.getId());
+    assertEquals("Shared fake Server, 5tb persistent disk, 40 max concurrent connections", plan.getDescription());
+    assertFalse(plan.isFree());
+    final Map<? extends String, ?> metadata = plan.getMetadata();
+    assertNotNull(metadata);
+    assertEquals(Integer.valueOf(5), metadata.get("max_storage_tb"));
+    @SuppressWarnings("unchecked")
+    final List<? extends Map<? extends String, ?>> costs = (List<? extends Map<? extends String, ?>>)metadata.get("costs");
+    assertNotNull(costs);
+    assertEquals(2, costs.size());
+
+    @SuppressWarnings("unchecked")
+    final Map<? extends String, ?> cost0 = (Map<? extends String, ?>)costs.get(0);
+    assertNotNull(cost0);
+    @SuppressWarnings("unchecked")
+    final Map<? extends String, ?> amount0 = (Map<? extends String, ?>)cost0.get("amount");
+    assertNotNull(amount0);
+    assertEquals(Double.valueOf(99.0d), amount0.get("usd"));
+    assertEquals("MONTHLY", cost0.get("unit"));
+
+    @SuppressWarnings("unchecked")
+    final Map<? extends String, ?> cost1 = (Map<? extends String, ?>)costs.get(1);
+    assertNotNull(cost1);
+    @SuppressWarnings("unchecked")
+    final Map<? extends String, ?> amount1 = (Map<? extends String, ?>)cost1.get("amount");
+    assertNotNull(amount1);
+    assertEquals(Double.valueOf(0.99d), amount1.get("usd"));
+    assertEquals("1GB of messages over 20GB", cost1.get("unit"));
+
+    @SuppressWarnings("unchecked")
+    final List<? extends String> bullets = (List<? extends String>)metadata.get("bullets");
+    assertNotNull(bullets);
+    assertEquals(3, bullets.size());
+    assertEquals("Shared fake server", bullets.get(0));
+    assertEquals("5 TB storage", bullets.get(1));
+    assertEquals("40 concurrent connections", bullets.get(2));
+
+    final Schema schema = plan.getSchemas();
+    assertNotNull(schema);
+    testSchema(schema);
+  }
+
+  @Test
+  public void testWritePlan() throws IOException {
+    final Plan plan = createPlan();
+    assertNotNull(plan);
+    
+    final String json = objectMapper.writeValueAsString(plan);
+    assertNotNull(json);
+    
+    final Path planPath = this.referenceFiles.resolve("plan.json");
+    assertNotNull(planPath);
+    
+    final String expectedJson = new String(Files.readAllBytes(planPath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final Plan createPlan() {    
+    final List<Map<? extends String, ?>> costs = new ArrayList<>();
+
+    final Map<String, Float> ninetyNineDollars = new HashMap<>();
+    ninetyNineDollars.put("usd", 99.0f);
+    final Map<String, Object> cost0 = new LinkedHashMap<>();
+    cost0.put("amount", ninetyNineDollars);
+    cost0.put("unit", "MONTHLY");
+
+    costs.add(cost0);
+
+    final Map<String, Float> ninetyNineCents = new HashMap<>();
+    ninetyNineCents.put("usd", 0.99f);
+    final Map<String, Object> cost1 = new LinkedHashMap<>();
+    cost1.put("amount", ninetyNineCents);
+    cost1.put("unit", "1GB of messages over 20GB");
+
+    costs.add(cost1);
+
+    final List<String> bullets = new ArrayList<>();
+    bullets.add("Shared fake server");
+    bullets.add("5 TB storage");
+    bullets.add("40 concurrent connections");
+    
+    final Map<String, Object> metadata = new LinkedHashMap<>();
+    metadata.put("max_storage_tb", Integer.valueOf(5));
+    metadata.put("costs", costs);
+    metadata.put("bullets", bullets);
+
+    final Schema schema = createSchema();
+    assertNotNull(schema);
+
+    return new Plan("d3031751-XXXX-XXXX-XXXX-a42377d3320e",
+                    "fake-plan-1",
+                    "Shared fake Server, 5tb persistent disk, 40 max concurrent connections",
+                    metadata,
+                    false,
+                    null,
+                    schema);
+  }
 
   /*
    * Inner and nested classes.
