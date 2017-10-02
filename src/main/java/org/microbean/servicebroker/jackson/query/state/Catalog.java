@@ -19,6 +19,7 @@ package org.microbean.servicebroker.jackson.query.state;
 import java.net.URI;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,43 +30,69 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import org.microbean.servicebroker.api.query.state.Catalog.Service.DashboardClient;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceInstance;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters;
 
-public abstract class Catalog {
+abstract class Catalog {
 
   @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
   @JsonNaming(SnakeCaseStrategy.class)
   @JsonPropertyOrder({ "name", "id", "description", "tags", "requires", "bindable", "metadata", "dashboard_client", "plan_updateable", "plans" })
-  public static abstract class ServiceMixin {
+  static abstract class ServiceMixin {
+
+    @JsonCreator
+    ServiceMixin(@JsonProperty("id") final String id,
+                 @JsonProperty("name") final String name,
+                 @JsonProperty("description") final String description,
+                 @JsonProperty("tags") final Set<? extends String> tags,
+                 @JsonProperty("requires") final Set<? extends String> requires,
+                 @JsonProperty("bindable") final boolean bindable,
+                 @JsonProperty("metadata") final Map<? extends String, ?> metadata,
+                 @JsonProperty("dashboard_client") final DashboardClient dashboardClient,
+                 @JsonProperty("plan_updateable") final boolean planUpdatable,
+                 @JsonProperty("plans") final Set<? extends Plan> plans) {
+      super();
+    }
     
     @JsonProperty("plan_updateable")
     public abstract boolean isPlanUpdatable();
 
   }
 
-  public static abstract class Service {
+  static abstract class Service {
     
     @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
     @JsonNaming(SnakeCaseStrategy.class)
     @JsonPropertyOrder({ "id", "secret", "redirect_uri" })
-    public abstract class DashboardClientMixin {
-      
+    static abstract class DashboardClientMixin {
+
+      @JsonCreator
+      DashboardClientMixin(@JsonProperty("id") final String oAuthClientId,
+                           @JsonProperty("secret") final String secret,
+                           @JsonProperty("redirect_uri") final URI redirectUri) {
+        super();
+      }
+
+      @JsonProperty("id")
+      public abstract String getOAuthClientId();
+
       @JsonProperty("redirect_uri")
       public abstract URI getRedirectUri();
       
     }
 
-    public static abstract class Plan {
+    static abstract class Plan {
 
-      public static abstract class Schema {
+      static abstract class Schema {
 
         @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
         @JsonNaming(SnakeCaseStrategy.class)
         @JsonPropertyOrder({ "create", "update" })
-        public static abstract class ServiceInstanceMixin {
+        static abstract class ServiceInstanceMixin {
 
           @JsonCreator
           ServiceInstanceMixin(@JsonProperty("create") final InputParameters create,
@@ -79,7 +106,7 @@ public abstract class Catalog {
         @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
         @JsonNaming(SnakeCaseStrategy.class)
         @JsonPropertyOrder({ "create" })
-        public static abstract class ServiceBindingMixin {
+        static abstract class ServiceBindingMixin {
 
           @JsonCreator
           ServiceBindingMixin(@JsonProperty("create") final InputParameters create) {
@@ -91,7 +118,7 @@ public abstract class Catalog {
         @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
         @JsonNaming(SnakeCaseStrategy.class)
         @JsonPropertyOrder({ "parameters" })
-        public static abstract class InputParametersMixin {
+        static abstract class InputParametersMixin {
 
           @JsonCreator
           InputParametersMixin(@JsonProperty("parameters") final Map<? extends String, ?> parameters) {
@@ -105,7 +132,7 @@ public abstract class Catalog {
       @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
       @JsonNaming(SnakeCaseStrategy.class)
       @JsonPropertyOrder({ "service_instance", "service_binding" })
-      public static abstract class SchemaMixin {
+      static abstract class SchemaMixin {
 
         @JsonCreator
         SchemaMixin(@JsonProperty("service_instance") final ServiceInstance serviceInstance,
@@ -120,7 +147,7 @@ public abstract class Catalog {
     @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
     @JsonNaming(SnakeCaseStrategy.class)
     @JsonPropertyOrder({ "name", "id", "description", "free", "metadata", "bindable", "schemas" })
-    public static abstract class PlanMixin {
+    static abstract class PlanMixin {
 
       @JsonCreator
       PlanMixin(@JsonProperty("id") final String id,

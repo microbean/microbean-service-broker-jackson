@@ -18,17 +18,22 @@ package org.microbean.servicebroker.jackson;
 
 import java.io.IOException;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -38,11 +43,14 @@ import com.fasterxml.jackson.databind.introspect.ClassIntrospector;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan;
-import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.DashboardClient;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceInstance;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan;
+import org.microbean.servicebroker.api.query.state.Catalog.Service;
+import org.microbean.servicebroker.api.query.state.Catalog;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -334,6 +342,140 @@ public class TestMappings {
                     null,
                     schema);
   }
+
+  @Test
+  public void testReadService() throws IOException {
+    final Path servicePath = this.referenceFiles.resolve("service.json");
+    assertNotNull(servicePath);
+    final Service service = objectMapper.readValue(servicePath.toUri().toURL(), Service.class);
+    assertNotNull(service);
+    testService(service);
+  }
+
+  private static final void testService(final Service service) {
+    assertNotNull(service);
+    assertEquals("fake-service", service.getName());
+    assertEquals("acb56d7c-XXXX-XXXX-XXXX-feb140a59a66", service.getId());
+    assertEquals("fake service", service.getDescription());
+    assertEquals(new LinkedHashSet<>(Arrays.asList("no-sql", "relational")), service.getTags());
+    assertEquals(new LinkedHashSet<>(Arrays.asList("route_forwarding")), service.getRequires());
+    assertTrue(service.isBindable());
+    final Map<? extends String, ?> metadata = service.getMetadata();
+    assertNotNull(metadata);
+    @SuppressWarnings("unchecked")
+    final Map<? extends String, ?> provider = (Map<? extends String, ?>)metadata.get("provider");
+    assertNotNull(provider);
+    assertEquals("The name", provider.get("name"));
+    @SuppressWarnings("unchecked")
+    final Map<? extends String, ?> listing = (Map<? extends String, ?>)metadata.get("listing");
+    assertNotNull(listing);
+    assertEquals("http://example.com/cat.gif", listing.get("imageUrl"));
+    assertEquals("Add a blurb here", listing.get("blurb"));
+    assertEquals("A long time ago, in a galaxy far far away...", listing.get("longDescription"));
+    assertEquals("The Fake Broker", metadata.get("displayName"));
+    assertEquals(metadata, service.getMetadata());
+    final DashboardClient dashboardClient = service.getDashboardClient();
+    assertNotNull(dashboardClient);
+    assertEquals("398e2f8e-XXXX-XXXX-XXXX-19a71ecbcf64", dashboardClient.getOAuthClientId());
+    assertEquals("277cabb0-XXXX-XXXX-XXXX-7822c0a90e5d", dashboardClient.getSecret());
+    assertEquals("http://localhost:1234", dashboardClient.getRedirectUri().toString());
+    assertTrue(service.isPlanUpdatable());
+    final Set<? extends Plan> plans = service.getPlans();
+    assertNotNull(plans);
+    assertEquals(1, plans.size());
+    final Plan plan0 = plans.iterator().next();
+    assertNotNull(plan0);
+    testPlan(plan0);
+  }
+
+  @Test
+  public void testWriteService() throws IOException {
+    final Service service = createService();
+    assertNotNull(service);
+    
+    final String json = objectMapper.writeValueAsString(service);
+    assertNotNull(json);
+    
+    final Path servicePath = this.referenceFiles.resolve("service.json");
+    assertNotNull(servicePath);
+    
+    final String expectedJson = new String(Files.readAllBytes(servicePath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final Service createService() {
+    final Plan plan0 = createPlan();
+    assertNotNull(plan0);
+    final Map<String, Object> metadata = new LinkedHashMap<>();
+    final Map<String, Object> provider = new LinkedHashMap<>();
+    provider.put("name", "The name");
+    metadata.put("provider", provider);
+    final Map<String, Object> listing = new LinkedHashMap<>();
+    listing.put("imageUrl", "http://example.com/cat.gif");
+    listing.put("blurb", "Add a blurb here");
+    listing.put("longDescription", "A long time ago, in a galaxy far far away...");
+    metadata.put("listing", listing);
+    final Set<String> tags = new LinkedHashSet<>();
+    tags.add("no-sql");
+    tags.add("relational");
+    final Set<String> requires = new LinkedHashSet<>();
+    requires.add("route_forwarding");
+    final DashboardClient dashboardClient =
+      new DashboardClient("398e2f8e-XXXX-XXXX-XXXX-19a71ecbcf64",
+                          "277cabb0-XXXX-XXXX-XXXX-7822c0a90e5d",
+                          URI.create("http://localhost:1234"));
+    return new Service("acb56d7c-XXXX-XXXX-XXXX-feb140a59a66",
+                       "fake-service",
+                       "fake service",
+                       tags,
+                       requires,
+                       true,
+                       metadata,
+                       dashboardClient,
+                       true,
+                       Collections.singleton(plan0));
+  }
+
+  @Test
+  public void testReadCatalog() throws IOException {
+    final Path catalogPath = this.referenceFiles.resolve("catalog.json");
+    assertNotNull(catalogPath);
+    final Catalog catalog = objectMapper.readValue(catalogPath.toUri().toURL(), Catalog.class);
+    assertNotNull(catalog);
+    testCatalog(catalog);
+  }
+
+  private static final void testCatalog(final Catalog catalog) {
+    assertNotNull(catalog);
+    final Set<? extends Service> services = catalog.getServices();
+    assertNotNull(services);
+    assertEquals(1, services.size());
+    final Service service0 = services.iterator().next();
+    assertNotNull(service0);
+    testService(service0);
+  }
+
+  @Test
+  public void testWriteCatalog() throws IOException {
+    final Catalog catalog = createCatalog();
+    assertNotNull(catalog);
+    
+    final String json = objectMapper.writeValueAsString(catalog);
+    assertNotNull(json);
+    
+    final Path catalogPath = this.referenceFiles.resolve("catalog.json");
+    assertNotNull(catalogPath);
+    
+    final String expectedJson = new String(Files.readAllBytes(catalogPath), "UTF-8").trim();
+    assertEquals(expectedJson, json);
+  }
+
+  private static final Catalog createCatalog() {
+    final Service service = createService();
+    assertNotNull(service);
+    return new Catalog(Collections.singleton(service));
+  }
+  
 
   /*
    * Inner and nested classes.
