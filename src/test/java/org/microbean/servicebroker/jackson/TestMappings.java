@@ -38,8 +38,6 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import com.fasterxml.jackson.databind.introspect.ClassIntrospector;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,8 +70,8 @@ public class TestMappings {
   @Before
   public void createObjectMapper() {
     this.objectMapper = new ObjectMapper();
+    this.objectMapper.registerModule(new ServiceBrokerModule());
     this.objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-    this.objectMapper.setMixInResolver(new MixinResolver());
   }
 
   @Test
@@ -475,45 +473,6 @@ public class TestMappings {
     final Service service = createService();
     assertNotNull(service);
     return new Catalog(Collections.singleton(service));
-  }
-  
-
-  /*
-   * Inner and nested classes.
-   */
-
-
-  private static final class MixinResolver implements ClassIntrospector.MixInResolver {
-    
-    private MixinResolver() {
-      super();
-    }
-
-    @Override
-    public final Class<?> findMixInClassFor(final Class<?> c) {
-      Class<?> returnValue = null;
-      if (c != null) {
-        String className = c.getName();
-        if (className.startsWith("org.microbean.servicebroker.api.")) {
-          assert className.length() > "org.microbean.servicebroker.api.".length();
-          final StringBuilder newClassName = new StringBuilder("org.microbean.servicebroker.jackson.");
-          newClassName.append(className.substring("org.microbean.servicebroker.api.".length()));
-          newClassName.append("Mixin");
-          try {
-            returnValue = Class.forName(newClassName.toString(), true, Thread.currentThread().getContextClassLoader());
-          } catch (final ClassNotFoundException cnfe) {
-            returnValue = null;
-          }
-        }
-      }
-      return returnValue;
-    }
-
-    @Override
-    public final ClassIntrospector.MixInResolver copy() {
-      return this; // we're immutable
-    }
-    
   }
   
 }
