@@ -14,32 +14,26 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.microbean.servicebroker.jackson.command;
+package org.microbean.servicebroker.jackson;
 
-import java.net.URI;
+import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-public abstract class ProvisionServiceInstanceCommand {
+@JsonInclude(content = JsonInclude.Include.NON_NULL, value = JsonInclude.Include.NON_EMPTY)
+@JsonNaming(SnakeCaseStrategy.class)
+public abstract class AbstractStatefulObjectMixin {
 
-  @JsonInclude(content = JsonInclude.Include.NON_NULL, value = JsonInclude.Include.NON_EMPTY)
-  @JsonNaming(SnakeCaseStrategy.class)
-  @JsonPropertyOrder({ "dashboard_uri", "operation" })
-  public static class ResponseMixin {
+  @JsonAnyGetter
+  abstract Map<? extends String, ?> getProperties();
 
-    @JsonCreator
-    private ResponseMixin(@JsonProperty("dashboard_uri") final URI dashboardUri,
-                          @JsonProperty("operation") final String operation) {
-      super();
-    }
-    
-  }
-
+  @JsonAnySetter
+  abstract void setProperty(final String name, final Object property);
+  
 }

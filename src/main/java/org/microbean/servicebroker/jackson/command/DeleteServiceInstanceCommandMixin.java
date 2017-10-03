@@ -16,10 +16,7 @@
  */
 package org.microbean.servicebroker.jackson.command;
 
-import java.net.URI;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -28,25 +25,17 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-public abstract class ProvisionBindingCommand {
+@JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
+@JsonNaming(SnakeCaseStrategy.class)
+@JsonPropertyOrder({ "instance_id", "service_id", "plan_id", "accepts_incomplete" })
+public abstract class DeleteServiceInstanceCommandMixin {
 
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonNaming(SnakeCaseStrategy.class)
-  @JsonPropertyOrder({ "app_guid", "route" })
-  public static abstract class BindResourceMixin {
-
-    @JsonCreator
-    private BindResourceMixin(@JsonProperty("app_guid") final String appGuid,
-                              @JsonProperty("route") final URI route) {
-      super();
-    }
-    
+  @JsonCreator
+  private DeleteServiceInstanceCommandMixin(@JsonProperty("instance_id") final String instanceId,
+                                            @JsonProperty("service_id") final String serviceId,
+                                            @JsonProperty("plan_id") final String planId,
+                                            @JsonProperty("accepts_incomplete") final boolean acceptsIncomplete) {
+    super();
   }
   
-  @JsonInclude(content = JsonInclude.Include.NON_NULL, value = JsonInclude.Include.NON_EMPTY)
-  @JsonNaming(SnakeCaseStrategy.class)
-  public static abstract class ResponseMixin {
-    
-  }
-
 }

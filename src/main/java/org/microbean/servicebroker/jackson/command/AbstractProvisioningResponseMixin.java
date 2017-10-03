@@ -14,23 +14,18 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.microbean.servicebroker.jackson.command.state;
+package org.microbean.servicebroker.jackson.command;
 
-import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-import org.microbean.servicebroker.api.command.ProvisionServiceInstanceCommand;
-
 @JsonInclude(content = JsonInclude.Include.NON_NULL, value = JsonInclude.Include.NON_EMPTY)
 @JsonNaming(SnakeCaseStrategy.class)
-abstract class OperationMixin {
+public abstract class AbstractProvisioningResponseMixin {
 
 }

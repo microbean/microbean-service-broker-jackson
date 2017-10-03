@@ -41,7 +41,8 @@ public class ServiceBrokerModule extends SimpleModule {
   private static final long serialVersionUID = 1L;
   
   public ServiceBrokerModule() {
-    super();
+    super(new PackageVersion().version());
+    
     this.setMixInAnnotation(Catalog.class, CatalogMixin.class);
     this.setMixInAnnotation(DashboardClient.class, DashboardClientMixin.class);
     this.setMixInAnnotation(InputParameters.class, InputParametersMixin.class);
@@ -51,20 +52,20 @@ public class ServiceBrokerModule extends SimpleModule {
     this.setMixInAnnotation(ServiceBinding.class, ServiceBindingMixin.class);
     this.setMixInAnnotation(ServiceInstance.class, ServiceInstanceMixin.class);
 
-    this.setMixInAnnotation(org.microbean.servicebroker.api.command.DeleteBindingCommand.Response.class,
-                            org.microbean.servicebroker.jackson.command.DeleteBindingCommand.ResponseMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.command.DeleteServiceInstanceCommand.Response.class,
-                            org.microbean.servicebroker.jackson.command.DeleteServiceInstanceCommand.ResponseMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionBindingCommand.BindResource.class,
-                            org.microbean.servicebroker.jackson.command.ProvisionBindingCommand.BindResourceMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionBindingCommand.Response.class,
-                            org.microbean.servicebroker.jackson.command.ProvisionBindingCommand.ResponseMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionServiceInstanceCommand.Response.class,
-                            org.microbean.servicebroker.jackson.command.ProvisionServiceInstanceCommand.ResponseMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.PreviousValues.class,
-                            org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.PreviousValuesMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.Response.class,
-                            org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.ResponseMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.AbstractStatefulObject.class, org.microbean.servicebroker.jackson.AbstractStatefulObjectMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.AbstractProvisioningResponse.class, org.microbean.servicebroker.jackson.command.AbstractProvisioningResponseMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.DeleteBindingCommand.class, org.microbean.servicebroker.jackson.command.DeleteBindingCommandMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.DeleteServiceInstanceCommand.class, org.microbean.servicebroker.jackson.command.DeleteServiceInstanceCommandMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionBindingCommand.BindResource.class, org.microbean.servicebroker.jackson.command.ProvisionBindingCommand.BindResourceMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionBindingCommand.Response.class, org.microbean.servicebroker.jackson.command.ProvisionBindingCommand.ResponseMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionBindingCommand.class, org.microbean.servicebroker.jackson.command.ProvisionBindingCommandMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionServiceInstanceCommand.class, org.microbean.servicebroker.jackson.command.ProvisionServiceInstanceCommandMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionServiceInstanceCommand.Response.class, org.microbean.servicebroker.jackson.command.ProvisionServiceInstanceCommand.ResponseMixin.class);
+        this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommandMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.PreviousValues.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.PreviousValuesMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.Response.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.ResponseMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.LastOperation.class, org.microbean.servicebroker.jackson.query.state.LastOperationMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.LastOperation.State.class, org.microbean.servicebroker.jackson.query.state.LastOperation.StateMixin.class);
   }
   
 }

@@ -46,5 +46,4 @@ public abstract class UpdateServiceInstanceCommandMixin {
                                             @JsonProperty("previous_values") final PreviousValues previousValues) {
     super();
   }
-  
 }

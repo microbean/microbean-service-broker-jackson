@@ -14,12 +14,11 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.microbean.servicebroker.jackson.command;
+package org.microbean.servicebroker.jackson.query.state;
 
-import java.net.URI;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -28,25 +27,17 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-public abstract class ProvisionBindingCommand {
+import org.microbean.servicebroker.api.query.state.LastOperation.State;
 
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonNaming(SnakeCaseStrategy.class)
-  @JsonPropertyOrder({ "app_guid", "route" })
-  public static abstract class BindResourceMixin {
+@JsonInclude(content = JsonInclude.Include.NON_NULL, value = JsonInclude.Include.NON_EMPTY)
+@JsonNaming(SnakeCaseStrategy.class)
+@JsonPropertyOrder({ "state", "description" })
+public abstract class LastOperationMixin {
 
-    @JsonCreator
-    private BindResourceMixin(@JsonProperty("app_guid") final String appGuid,
-                              @JsonProperty("route") final URI route) {
-      super();
-    }
-    
+  @JsonCreator
+  private LastOperationMixin(@JsonProperty("state") final State state,
+                             @JsonProperty("description") final String description) {
+    super();
   }
   
-  @JsonInclude(content = JsonInclude.Include.NON_NULL, value = JsonInclude.Include.NON_EMPTY)
-  @JsonNaming(SnakeCaseStrategy.class)
-  public static abstract class ResponseMixin {
-    
-  }
-
 }

@@ -1,0 +1,12 @@
+{
+  "binding_id" : "123",
+  "instance_id" : "abc",
+  "service_id" : "xyz",
+  "plan_id" : "basic",
+  "bind_resource" : {
+    "app_guid" : "abcxyz",
+    "route" : "http://example.com:8080",
+    "argle_bargle" : "bargle"
+  },
+  "argle_bargle" : "bargle"
+}

@@ -16,7 +16,9 @@
  */
 package org.microbean.servicebroker.jackson.command;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
@@ -27,6 +29,11 @@ public abstract class UpdateServiceInstanceCommand {
   @JsonInclude(content = JsonInclude.Include.NON_NULL, value = JsonInclude.Include.NON_EMPTY)
   @JsonNaming(SnakeCaseStrategy.class)
   public static abstract class ResponseMixin {
+
+    @JsonCreator
+    private ResponseMixin(@JsonProperty("operation") final String operation) {
+      super();
+    }
     
   }
 
@@ -34,6 +41,14 @@ public abstract class UpdateServiceInstanceCommand {
   @JsonNaming(SnakeCaseStrategy.class)
   public static abstract class PreviousValuesMixin {
 
+    @JsonCreator
+    private PreviousValuesMixin(@JsonProperty("service_id") final String serviceId,
+                                @JsonProperty("plan_id") final String planId,
+                                @JsonProperty("organization_id") final String organizationId,
+                                @JsonProperty("space_id") final String spaceId) {
+      super();
+    }
+    
   }
 
 }

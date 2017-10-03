@@ -41,6 +41,15 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.microbean.servicebroker.api.command.DeleteBindingCommand;
+import org.microbean.servicebroker.api.command.DeleteServiceInstanceCommand;
+import org.microbean.servicebroker.api.command.ProvisionBindingCommand;
+import org.microbean.servicebroker.api.command.ProvisionBindingCommand.BindResource;
+import org.microbean.servicebroker.api.command.ProvisionServiceInstanceCommand;
+import org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand;
+import org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.PreviousValues;
+import org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.Response;
+
 import org.microbean.servicebroker.api.query.state.Catalog.Service.DashboardClient;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding;
@@ -49,10 +58,12 @@ import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan;
 import org.microbean.servicebroker.api.query.state.Catalog.Service;
 import org.microbean.servicebroker.api.query.state.Catalog;
+import org.microbean.servicebroker.api.query.state.LastOperation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestMappings {
@@ -475,6 +486,407 @@ public class TestMappings {
     final Catalog catalog = new Catalog(Collections.singleton(service));
     catalog.setProperty("argle", "bargle");
     return catalog;
+  }
+
+  @Test
+  public void testReadDeleteBindingCommand() throws IOException {
+    final Path deleteBindingCommandPath = this.referenceFiles.resolve("deleteBindingCommand.json");
+    assertNotNull(deleteBindingCommandPath);
+    final DeleteBindingCommand deleteBindingCommand = objectMapper.readValue(deleteBindingCommandPath.toUri().toURL(), DeleteBindingCommand.class);
+    assertNotNull(deleteBindingCommand);
+    testDeleteBindingCommand(deleteBindingCommand);
+  }
+
+  private static final void testDeleteBindingCommand(final DeleteBindingCommand deleteBindingCommand) {
+    assertNotNull(deleteBindingCommand);
+    assertNull(deleteBindingCommand.getBindingId());
+    assertNull(deleteBindingCommand.getInstanceId());
+    assertEquals("xyz", deleteBindingCommand.getServiceId());
+    assertEquals("basic", deleteBindingCommand.getPlanId());
+    assertEquals("bargle", deleteBindingCommand.getProperty("argle_bargle"));
+  }
+
+  @Test
+  public void testWriteDeleteBindingCommand() throws IOException {
+    final DeleteBindingCommand deleteBindingCommand = createDeleteBindingCommand();
+    assertNotNull(deleteBindingCommand);
+
+    final String json = objectMapper.writeValueAsString(deleteBindingCommand);
+    assertNotNull(json);
+    
+    final Path deleteBindingCommandPath = this.referenceFiles.resolve("deleteBindingCommand.json");
+    assertNotNull(deleteBindingCommandPath);
+    
+    final String expectedJson = new String(Files.readAllBytes(deleteBindingCommandPath), "UTF-8").trim();
+    assertEquals(expectedJson, json);
+  }
+
+  private static final DeleteBindingCommand createDeleteBindingCommand() {
+    final DeleteBindingCommand returnValue = new DeleteBindingCommand(null, null, "xyz", "basic");
+    returnValue.setProperty("argle_bargle", "bargle");
+    return returnValue;
+  }
+  
+  @Test
+  public void testReadDeleteBindingCommandResponse() throws IOException {
+    final Path deleteBindingCommandResponsePath = this.referenceFiles.resolve("deleteBindingCommand.response.json");
+    assertNotNull(deleteBindingCommandResponsePath);
+    final DeleteBindingCommand.Response deleteBindingCommandResponse = objectMapper.readValue(deleteBindingCommandResponsePath.toUri().toURL(), DeleteBindingCommand.Response.class);
+    assertNotNull(deleteBindingCommandResponse);
+    testDeleteBindingCommandResponse(deleteBindingCommandResponse);
+  }
+
+  private static final void testDeleteBindingCommandResponse(final DeleteBindingCommand.Response deleteBindingCommandResponse) {
+    assertNotNull(deleteBindingCommandResponse);
+    assertEquals("bargle", deleteBindingCommandResponse.getProperty("argle_bargle"));
+  }
+
+  @Test
+  public void testWriteDeleteBindingCommandResponse() throws IOException {
+    final DeleteBindingCommand.Response deleteBindingCommandResponse = createDeleteBindingCommandResponse();
+    assertNotNull(deleteBindingCommandResponse);
+    
+    final String json = objectMapper.writeValueAsString(deleteBindingCommandResponse);
+    assertNotNull(json);
+    
+    final Path deleteBindingCommandResponsePath = this.referenceFiles.resolve("deleteBindingCommand.response.json");
+    assertNotNull(deleteBindingCommandResponsePath);
+    
+    final String expectedJson = new String(Files.readAllBytes(deleteBindingCommandResponsePath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final DeleteBindingCommand.Response createDeleteBindingCommandResponse() {
+    final DeleteBindingCommand.Response deleteBindingCommandResponse = new DeleteBindingCommand.Response();
+    deleteBindingCommandResponse.setProperty("argle_bargle", "bargle");
+    return deleteBindingCommandResponse;
+  }
+
+  @Test
+  public void testReadDeleteServiceInstanceCommand() throws IOException {
+    final Path deleteServiceInstanceCommandPath = this.referenceFiles.resolve("deleteServiceInstanceCommand.json");
+    assertNotNull(deleteServiceInstanceCommandPath);
+    final DeleteServiceInstanceCommand deleteServiceInstanceCommand = objectMapper.readValue(deleteServiceInstanceCommandPath.toUri().toURL(), DeleteServiceInstanceCommand.class);
+    assertNotNull(deleteServiceInstanceCommand);
+    testDeleteServiceInstanceCommand(deleteServiceInstanceCommand);
+  }
+
+  private static final void testDeleteServiceInstanceCommand(final DeleteServiceInstanceCommand deleteServiceInstanceCommand) {
+    assertNotNull(deleteServiceInstanceCommand);
+    assertEquals("abc", deleteServiceInstanceCommand.getInstanceId());
+    assertEquals("xyz", deleteServiceInstanceCommand.getServiceId());
+    assertEquals("basic", deleteServiceInstanceCommand.getPlanId());
+    assertFalse(deleteServiceInstanceCommand.getAcceptsIncomplete());
+    assertEquals("bargle", deleteServiceInstanceCommand.getProperty("argle_bargle"));
+  }
+
+  @Test
+  public void testWriteDeleteServiceInstanceCommand() throws IOException {
+    final DeleteServiceInstanceCommand deleteServiceInstanceCommand = createDeleteServiceInstanceCommand();
+    assertNotNull(deleteServiceInstanceCommand);
+    
+    final String json = objectMapper.writeValueAsString(deleteServiceInstanceCommand);
+    assertNotNull(json);
+    
+    final Path deleteServiceInstanceCommandPath = this.referenceFiles.resolve("deleteServiceInstanceCommand.json");
+    assertNotNull(deleteServiceInstanceCommandPath);
+    
+    final String expectedJson = new String(Files.readAllBytes(deleteServiceInstanceCommandPath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final DeleteServiceInstanceCommand createDeleteServiceInstanceCommand() {
+    final DeleteServiceInstanceCommand returnValue = new DeleteServiceInstanceCommand("abc", "xyz", "basic", false);
+    returnValue.setProperty("argle_bargle", "bargle");
+    return returnValue;
+  }
+
+  @Test
+  public void testReadDeleteServiceInstanceCommandResponse() throws IOException {
+    final Path deleteServiceInstanceCommandResponsePath = this.referenceFiles.resolve("deleteServiceInstanceCommand.response.json");
+    assertNotNull(deleteServiceInstanceCommandResponsePath);
+    final DeleteServiceInstanceCommand.Response deleteServiceInstanceCommandResponse = objectMapper.readValue(deleteServiceInstanceCommandResponsePath.toUri().toURL(), DeleteServiceInstanceCommand.Response.class);
+    assertNotNull(deleteServiceInstanceCommandResponse);
+    testDeleteServiceInstanceCommandResponse(deleteServiceInstanceCommandResponse);
+  }
+
+  private static final void testDeleteServiceInstanceCommandResponse(final DeleteServiceInstanceCommand.Response deleteServiceInstanceCommandResponse) {
+    assertNotNull(deleteServiceInstanceCommandResponse);
+    assertEquals("bargle", deleteServiceInstanceCommandResponse.getProperty("argle_bargle"));
+  }
+
+  @Test
+  public void testWriteDeleteServiceInstanceCommandResponse() throws IOException {
+    final DeleteServiceInstanceCommand.Response deleteServiceInstanceCommandResponse = createDeleteServiceInstanceCommandResponse();
+    assertNotNull(deleteServiceInstanceCommandResponse);
+    
+    final String json = objectMapper.writeValueAsString(deleteServiceInstanceCommandResponse);
+    assertNotNull(json);
+    
+    final Path deleteServiceInstanceCommandResponsePath = this.referenceFiles.resolve("deleteServiceInstanceCommand.response.json");
+    assertNotNull(deleteServiceInstanceCommandResponsePath);
+    
+    final String expectedJson = new String(Files.readAllBytes(deleteServiceInstanceCommandResponsePath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final DeleteServiceInstanceCommand.Response createDeleteServiceInstanceCommandResponse() {
+    final DeleteServiceInstanceCommand.Response deleteServiceInstanceCommandResponse = new DeleteServiceInstanceCommand.Response();
+    deleteServiceInstanceCommandResponse.setProperty("argle_bargle", "bargle");
+    return deleteServiceInstanceCommandResponse;
+  }
+
+  @Test
+  public void testReadProvisionBindingCommand() throws IOException {
+    final Path provisionBindingCommandPath = this.referenceFiles.resolve("provisionBindingCommand.json");
+    assertNotNull(provisionBindingCommandPath);
+    final ProvisionBindingCommand provisionBindingCommand = objectMapper.readValue(provisionBindingCommandPath.toUri().toURL(), ProvisionBindingCommand.class);
+    assertNotNull(provisionBindingCommand);
+    testProvisionBindingCommand(provisionBindingCommand);
+  }
+
+  private static final void testProvisionBindingCommand(final ProvisionBindingCommand provisionBindingCommand) {
+    assertNotNull(provisionBindingCommand);
+    assertEquals("123", provisionBindingCommand.getBindingId());
+    assertEquals("abc", provisionBindingCommand.getInstanceId());
+    assertEquals("xyz", provisionBindingCommand.getServiceId());
+    assertEquals("basic", provisionBindingCommand.getPlanId());
+    assertEquals("bargle", provisionBindingCommand.getProperty("argle_bargle"));
+    final BindResource bindResource = provisionBindingCommand.getBindResource();
+    assertNotNull(bindResource);
+    assertEquals("abcxyz", bindResource.getAppGuid());
+    assertEquals("bargle", bindResource.getProperty("argle_bargle"));
+    assertEquals("http://example.com:8080", bindResource.getRoute().toString());
+  }
+
+  @Test
+  public void testWriteProvisionBindingCommand() throws IOException {
+    final ProvisionBindingCommand provisionBindingCommand = createProvisionBindingCommand();
+    assertNotNull(provisionBindingCommand);
+
+    final String json = objectMapper.writeValueAsString(provisionBindingCommand);
+    assertNotNull(json);
+    
+    final Path provisionBindingCommandPath = this.referenceFiles.resolve("provisionBindingCommand.json");
+    assertNotNull(provisionBindingCommandPath);
+    
+    final String expectedJson = new String(Files.readAllBytes(provisionBindingCommandPath), "UTF-8").trim();
+    assertEquals(expectedJson, json);
+  }
+
+  private static final ProvisionBindingCommand createProvisionBindingCommand() {
+    final BindResource bindResource = new BindResource("abcxyz", URI.create("http://example.com:8080"));
+    bindResource.setProperty("argle_bargle", "bargle");
+    final ProvisionBindingCommand returnValue = new ProvisionBindingCommand("123", "abc", "xyz", "basic", bindResource, null);
+    returnValue.setProperty("argle_bargle", "bargle");
+    return returnValue;
+  }
+  
+  @Test
+  public void testReadProvisionBindingCommandResponse() throws IOException {
+    final Path provisionBindingCommandResponsePath = this.referenceFiles.resolve("provisionBindingCommand.response.json");
+    assertNotNull(provisionBindingCommandResponsePath);
+    final ProvisionBindingCommand.Response provisionBindingCommandResponse = objectMapper.readValue(provisionBindingCommandResponsePath.toUri().toURL(), ProvisionBindingCommand.Response.class);
+    assertNotNull(provisionBindingCommandResponse);
+    testProvisionBindingCommandResponse(provisionBindingCommandResponse);
+  }
+
+  private static final void testProvisionBindingCommandResponse(final ProvisionBindingCommand.Response provisionBindingCommandResponse) {
+    assertNotNull(provisionBindingCommandResponse);
+    final Map<? extends String, ?> credentials = provisionBindingCommandResponse.getCredentials();
+    assertNotNull(credentials);
+    assertEquals("bar", credentials.get("foo"));
+    assertEquals("bargle", provisionBindingCommandResponse.getProperty("argle_bargle"));
+  }
+
+  @Test
+  public void testWriteProvisionBindingCommandResponse() throws IOException {
+    final ProvisionBindingCommand.Response provisionBindingCommandResponse = createProvisionBindingCommandResponse();
+    assertNotNull(provisionBindingCommandResponse);
+    
+    final String json = objectMapper.writeValueAsString(provisionBindingCommandResponse);
+    assertNotNull(json);
+    
+    final Path provisionBindingCommandResponsePath = this.referenceFiles.resolve("provisionBindingCommand.response.json");
+    assertNotNull(provisionBindingCommandResponsePath);
+    
+    final String expectedJson = new String(Files.readAllBytes(provisionBindingCommandResponsePath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final ProvisionBindingCommand.Response createProvisionBindingCommandResponse() {
+    final Map<String, Object> credentials = new LinkedHashMap<>();
+    credentials.put("foo", "bar");
+    final ProvisionBindingCommand.Response provisionBindingCommandResponse = new ProvisionBindingCommand.Response(credentials);
+    provisionBindingCommandResponse.setProperty("argle_bargle", "bargle");
+    return provisionBindingCommandResponse;
+  }
+
+  @Test
+  public void testReadProvisionServiceInstanceCommand() throws IOException {
+    final Path provisionServiceInstanceCommandPath = this.referenceFiles.resolve("provisionServiceInstanceCommand.json");
+    assertNotNull(provisionServiceInstanceCommandPath);
+    final ProvisionServiceInstanceCommand provisionServiceInstanceCommand = objectMapper.readValue(provisionServiceInstanceCommandPath.toUri().toURL(), ProvisionServiceInstanceCommand.class);
+    assertNotNull(provisionServiceInstanceCommand);
+    testProvisionServiceInstanceCommand(provisionServiceInstanceCommand);
+  }
+
+  private static final void testProvisionServiceInstanceCommand(final ProvisionServiceInstanceCommand provisionServiceInstanceCommand) {
+    assertNotNull(provisionServiceInstanceCommand);
+    assertEquals("abc", provisionServiceInstanceCommand.getInstanceId());
+    assertEquals("xyz", provisionServiceInstanceCommand.getServiceId());
+    assertEquals("basic", provisionServiceInstanceCommand.getPlanId());
+    assertEquals("abcxyz", provisionServiceInstanceCommand.getOrganizationGuid());
+    assertEquals("abcxyz", provisionServiceInstanceCommand.getSpaceGuid());
+    assertTrue(provisionServiceInstanceCommand.getAcceptsIncomplete());
+    assertEquals("bargle", provisionServiceInstanceCommand.getProperty("argle_bargle"));
+    final Map<? extends String, ?> parameters = provisionServiceInstanceCommand.getParameters();
+    assertNotNull(parameters);
+    assertEquals("bar", parameters.get("foo"));
+  }
+
+  @Test
+  public void testWriteProvisionServiceInstanceCommand() throws IOException {
+    final ProvisionServiceInstanceCommand provisionServiceInstanceCommand = createProvisionServiceInstanceCommand();
+    assertNotNull(provisionServiceInstanceCommand);
+
+    final String json = objectMapper.writeValueAsString(provisionServiceInstanceCommand);
+    assertNotNull(json);
+    
+    final Path provisionServiceInstanceCommandPath = this.referenceFiles.resolve("provisionServiceInstanceCommand.json");
+    assertNotNull(provisionServiceInstanceCommandPath);
+    
+    final String expectedJson = new String(Files.readAllBytes(provisionServiceInstanceCommandPath), "UTF-8").trim();
+    assertEquals(expectedJson, json);
+  }
+
+  private static final ProvisionServiceInstanceCommand createProvisionServiceInstanceCommand() {
+    final Map<String, Object> parameters = new LinkedHashMap<>();
+    parameters.put("foo", "bar");
+    final ProvisionServiceInstanceCommand returnValue = new ProvisionServiceInstanceCommand("abc", "xyz", "basic", null /* no context */, true, "abcxyz", "abcxyz", parameters);
+    returnValue.setProperty("argle_bargle", "bargle");
+    return returnValue;
+  }
+  
+  @Test
+  public void testReadProvisionServiceInstanceCommandResponse() throws IOException {
+    final Path provisionServiceInstanceCommandResponsePath = this.referenceFiles.resolve("provisionServiceInstanceCommand.response.json");
+    assertNotNull(provisionServiceInstanceCommandResponsePath);
+    final ProvisionServiceInstanceCommand.Response provisionServiceInstanceCommandResponse = objectMapper.readValue(provisionServiceInstanceCommandResponsePath.toUri().toURL(), ProvisionServiceInstanceCommand.Response.class);
+    assertNotNull(provisionServiceInstanceCommandResponse);
+    testProvisionServiceInstanceCommandResponse(provisionServiceInstanceCommandResponse);
+  }
+
+  private static final void testProvisionServiceInstanceCommandResponse(final ProvisionServiceInstanceCommand.Response provisionServiceInstanceCommandResponse) {
+    assertNotNull(provisionServiceInstanceCommandResponse);
+    final String operation = provisionServiceInstanceCommandResponse.getOperation();
+    assertEquals("task_10", operation);
+    assertEquals("bargle", provisionServiceInstanceCommandResponse.getProperty("argle_bargle"));
+  }
+
+  @Test
+  public void testWriteProvisionServiceInstanceCommandResponse() throws IOException {
+    final ProvisionServiceInstanceCommand.Response provisionServiceInstanceCommandResponse = createProvisionServiceInstanceCommandResponse();
+    assertNotNull(provisionServiceInstanceCommandResponse);
+    
+    final String json = objectMapper.writeValueAsString(provisionServiceInstanceCommandResponse);
+    assertNotNull(json);
+    
+    final Path provisionServiceInstanceCommandResponsePath = this.referenceFiles.resolve("provisionServiceInstanceCommand.response.json");
+    assertNotNull(provisionServiceInstanceCommandResponsePath);
+    
+    final String expectedJson = new String(Files.readAllBytes(provisionServiceInstanceCommandResponsePath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final ProvisionServiceInstanceCommand.Response createProvisionServiceInstanceCommandResponse() {
+    final ProvisionServiceInstanceCommand.Response provisionServiceInstanceCommandResponse = new ProvisionServiceInstanceCommand.Response("task_10");
+    provisionServiceInstanceCommandResponse.setProperty("argle_bargle", "bargle");
+    return provisionServiceInstanceCommandResponse;
+  }
+
+  @Test
+  public void testReadUpdateServiceInstanceCommand() throws IOException {
+    final Path updateServiceInstanceCommandPath = this.referenceFiles.resolve("updateServiceInstanceCommand.json");
+    assertNotNull(updateServiceInstanceCommandPath);
+    final UpdateServiceInstanceCommand updateServiceInstanceCommand = objectMapper.readValue(updateServiceInstanceCommandPath.toUri().toURL(), UpdateServiceInstanceCommand.class);
+    assertNotNull(updateServiceInstanceCommand);
+    testUpdateServiceInstanceCommand(updateServiceInstanceCommand);
+  }
+
+  private static final void testUpdateServiceInstanceCommand(final UpdateServiceInstanceCommand updateServiceInstanceCommand) {
+    assertNotNull(updateServiceInstanceCommand);
+    assertEquals("abc", updateServiceInstanceCommand.getInstanceId());
+    assertEquals("xyz", updateServiceInstanceCommand.getServiceId());
+    assertEquals("basic", updateServiceInstanceCommand.getPlanId());
+    final Map<?, ?> context = updateServiceInstanceCommand.getContext();
+    assertNotNull(context);
+    assertTrue(context.isEmpty());
+    final Map<?, ?> parameters = updateServiceInstanceCommand.getParameters();
+    assertNotNull(parameters);
+    assertTrue(parameters.isEmpty());
+    assertTrue(updateServiceInstanceCommand.getAcceptsIncomplete());
+    final PreviousValues previousValues = updateServiceInstanceCommand.getPreviousValues();
+    assertNull(previousValues);
+    assertEquals("bargle", updateServiceInstanceCommand.getProperty("argle_bargle"));
+  }
+
+  @Test
+  public void testWriteUpdateServiceInstanceCommand() throws IOException {
+    final UpdateServiceInstanceCommand updateServiceInstanceCommand = createUpdateServiceInstanceCommand();
+    assertNotNull(updateServiceInstanceCommand);
+
+    final String json = objectMapper.writeValueAsString(updateServiceInstanceCommand);
+    assertNotNull(json);
+    
+    final Path updateServiceInstanceCommandPath = this.referenceFiles.resolve("updateServiceInstanceCommand.json");
+    assertNotNull(updateServiceInstanceCommandPath);
+    
+    final String expectedJson = new String(Files.readAllBytes(updateServiceInstanceCommandPath), "UTF-8").trim();
+    assertEquals(expectedJson, json);
+  }
+
+  private static final UpdateServiceInstanceCommand createUpdateServiceInstanceCommand() {
+    final UpdateServiceInstanceCommand returnValue = new UpdateServiceInstanceCommand("abc", null, "xyz", "basic", null /* no parameters */, true, null);
+    returnValue.setProperty("argle_bargle", "bargle");
+    return returnValue;
+  }
+  
+  @Test
+  public void testReadUpdateServiceInstanceCommandResponse() throws IOException {
+    final Path updateServiceInstanceCommandResponsePath = this.referenceFiles.resolve("updateServiceInstanceCommand.response.json");
+    assertNotNull(updateServiceInstanceCommandResponsePath);
+    final UpdateServiceInstanceCommand.Response updateServiceInstanceCommandResponse = objectMapper.readValue(updateServiceInstanceCommandResponsePath.toUri().toURL(), UpdateServiceInstanceCommand.Response.class);
+    assertNotNull(updateServiceInstanceCommandResponse);
+    testUpdateServiceInstanceCommandResponse(updateServiceInstanceCommandResponse);
+  }
+
+  private static final void testUpdateServiceInstanceCommandResponse(final UpdateServiceInstanceCommand.Response updateServiceInstanceCommandResponse) {
+    assertNotNull(updateServiceInstanceCommandResponse);
+    final String operation = updateServiceInstanceCommandResponse.getOperation();
+    assertEquals("task_10", operation);
+    assertEquals("bargle", updateServiceInstanceCommandResponse.getProperty("argle_bargle"));
+  }
+
+  @Test
+  public void testWriteUpdateServiceInstanceCommandResponse() throws IOException {
+    final UpdateServiceInstanceCommand.Response updateServiceInstanceCommandResponse = createUpdateServiceInstanceCommandResponse();
+    assertNotNull(updateServiceInstanceCommandResponse);
+    
+    final String json = objectMapper.writeValueAsString(updateServiceInstanceCommandResponse);
+    assertNotNull(json);
+    
+    final Path updateServiceInstanceCommandResponsePath = this.referenceFiles.resolve("updateServiceInstanceCommand.response.json");
+    assertNotNull(updateServiceInstanceCommandResponsePath);
+    
+    final String expectedJson = new String(Files.readAllBytes(updateServiceInstanceCommandResponsePath), "UTF-8").trim();
+    assertEquals(expectedJson, json);    
+  }
+
+  private static final UpdateServiceInstanceCommand.Response createUpdateServiceInstanceCommandResponse() {
+    final UpdateServiceInstanceCommand.Response updateServiceInstanceCommandResponse = new UpdateServiceInstanceCommand.Response("task_10");
+    updateServiceInstanceCommandResponse.setProperty("argle_bargle", "bargle");
+    return updateServiceInstanceCommandResponse;
   }
   
 }

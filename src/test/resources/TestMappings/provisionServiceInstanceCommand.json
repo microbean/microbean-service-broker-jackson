@@ -1,0 +1,12 @@
+{
+  "instance_id" : "abc",
+  "service_id" : "xyz",
+  "plan_id" : "basic",
+  "accepts_incomplete" : true,
+  "organization_guid" : "abcxyz",
+  "space_guid" : "abcxyz",
+  "parameters" : {
+    "foo" : "bar"
+  },
+  "argle_bargle" : "bargle"
+}
