@@ -458,7 +458,7 @@ public class TestMappings {
   public void testWriteCatalog() throws IOException {
     final Catalog catalog = createCatalog();
     assertNotNull(catalog);
-    
+
     final String json = objectMapper.writeValueAsString(catalog);
     assertNotNull(json);
     
@@ -472,7 +472,9 @@ public class TestMappings {
   private static final Catalog createCatalog() {
     final Service service = createService();
     assertNotNull(service);
-    return new Catalog(Collections.singleton(service));
+    final Catalog catalog = new Catalog(Collections.singleton(service));
+    catalog.setProperty("argle", "bargle");
+    return catalog;
   }
   
 }

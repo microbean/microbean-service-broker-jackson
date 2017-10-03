@@ -18,7 +18,12 @@ package org.microbean.servicebroker.jackson.query.state;
 
 import java.net.URI;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -26,36 +31,20 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+@JsonIgnoreProperties(ignoreUnknown = false)
 @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
 @JsonNaming(SnakeCaseStrategy.class)
-@JsonPropertyOrder("services")
+@JsonPropertyOrder(value = { "services" }, alphabetic = true)
 public abstract class CatalogMixin {
 
-  @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
-  @JsonNaming(SnakeCaseStrategy.class)
-  @JsonPropertyOrder({ "name", "id", "description", "tags", "requires", "bindable", "metadata", "dashboard_client", "plan_updateable", "plans" })
-  public static abstract class ServiceMixin {
-    
-    @JsonProperty("plan_updateable")
-    public abstract boolean isPlanUpdatable();
-
-    @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
-    @JsonNaming(SnakeCaseStrategy.class)
-    @JsonPropertyOrder({ "id", "secret", "redirect_uri" })
-    public abstract class DashboardClientMixin {
-      
-      @JsonProperty("redirect_uri")
-      public abstract URI getRedirectUri();
-      
-    }
-    
-    @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
-    @JsonNaming(SnakeCaseStrategy.class)
-    @JsonPropertyOrder({ "id", "name", "description", "metadata", "free", "bindable" })
-    public static abstract class PlanMixin {
-
-    }
-    
+  private CatalogMixin() {
+    super();
   }
+
+  @JsonAnyGetter
+  abstract Map<? extends String, ?> getProperties();
+
+  @JsonAnySetter
+  abstract void setProperty(final String name, final Object property);
   
 }

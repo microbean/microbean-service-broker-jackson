@@ -34,13 +34,13 @@ import org.microbean.servicebroker.api.command.ProvisionBindingCommand.BindResou
 @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
 @JsonNaming(SnakeCaseStrategy.class)
 @JsonPropertyOrder({ "service_id", "plan_id", "bind_resource", "parameters" })
-abstract class ProvisionBindingCommandMixin {
+public abstract class ProvisionBindingCommandMixin {
 
   @JsonCreator
-  ProvisionBindingCommandMixin(@JsonProperty("service_id") final String serviceId,
-                               @JsonProperty("plan_id") final String planId,
-                               @JsonProperty("bind_resource") final BindResource bindResource,
-                               @JsonProperty("parameters") final Map<? extends String, ? extends Object> parameters) {
+  private ProvisionBindingCommandMixin(@JsonProperty("service_id") final String serviceId,
+                                       @JsonProperty("plan_id") final String planId,
+                                       @JsonProperty("bind_resource") final BindResource bindResource,
+                                       @JsonProperty("parameters") final Map<? extends String, ? extends Object> parameters) {
     super();
   }
 

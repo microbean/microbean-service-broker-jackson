@@ -27,17 +27,17 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-abstract class ProvisionBindingCommand {
+public abstract class ProvisionBindingCommand {
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   @JsonNaming(SnakeCaseStrategy.class)
-  static class BindResourceMixin {
-
+  public static abstract class BindResourceMixin {
+    
   }
   
   @JsonInclude(content = JsonInclude.Include.NON_NULL, value = JsonInclude.Include.NON_EMPTY)
   @JsonNaming(SnakeCaseStrategy.class)
-  static class ResponseMixin {
+  public static abstract class ResponseMixin {
     
   }
 

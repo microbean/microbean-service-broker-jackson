@@ -34,16 +34,17 @@ import org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.Prev
 @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
 @JsonNaming(SnakeCaseStrategy.class)
 @JsonPropertyOrder({ "instance_id", "context", "service_id", "plan_id", "parameters", "accepts_incomplete", "previous_values" })
-abstract class UpdateServiceInstanceCommandMixin {
+public abstract class UpdateServiceInstanceCommandMixin {
 
   @JsonCreator
-  UpdateServiceInstanceCommandMixin(@JsonProperty("instance_id") final String instanceId,
-                                    @JsonProperty("context") final Map<? extends String, ?> context,
-                                    @JsonProperty("service_id") final String serviceId,
-                                    @JsonProperty("plan_id") final String planId,
-                                    @JsonProperty("parameters") final Map<? extends String, ?> parameters,
-                                    @JsonProperty("accepts_incomplete") final boolean acceptsIncomplete,
-                                    @JsonProperty("previous_values") final PreviousValues previousValues) {
+  private UpdateServiceInstanceCommandMixin(@JsonProperty("instance_id") final String instanceId,
+                                            @JsonProperty("context") final Map<? extends String, ?> context,
+                                            @JsonProperty("service_id") final String serviceId,
+                                            @JsonProperty("plan_id") final String planId,
+                                            @JsonProperty("parameters") final Map<? extends String, ?> parameters,
+                                            @JsonProperty("accepts_incomplete") final boolean acceptsIncomplete,
+                                            @JsonProperty("previous_values") final PreviousValues previousValues) {
     super();
   }
+  
 }

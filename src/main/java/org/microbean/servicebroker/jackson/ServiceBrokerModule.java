@@ -18,30 +18,53 @@ package org.microbean.servicebroker.jackson;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import org.microbean.servicebroker.api.query.state.Catalog.Service.DashboardClient;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceInstance;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema;
+import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan;
+import org.microbean.servicebroker.api.query.state.Catalog.Service;
+import org.microbean.servicebroker.api.query.state.Catalog;
+
+import org.microbean.servicebroker.jackson.query.state.Catalog.Service.DashboardClientMixin;
+import org.microbean.servicebroker.jackson.query.state.Catalog.Service.Plan.Schema.InputParametersMixin;
+import org.microbean.servicebroker.jackson.query.state.Catalog.Service.Plan.Schema.ServiceBindingMixin;
+import org.microbean.servicebroker.jackson.query.state.Catalog.Service.Plan.Schema.ServiceInstanceMixin;
+import org.microbean.servicebroker.jackson.query.state.Catalog.Service.Plan.SchemaMixin;
+import org.microbean.servicebroker.jackson.query.state.Catalog.Service.PlanMixin;
+import org.microbean.servicebroker.jackson.query.state.Catalog.ServiceMixin;
+import org.microbean.servicebroker.jackson.query.state.CatalogMixin;
+
 public class ServiceBrokerModule extends SimpleModule {
 
   private static final long serialVersionUID = 1L;
   
   public ServiceBrokerModule() {
     super();
-    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.Catalog.class,
-                            org.microbean.servicebroker.jackson.query.state.CatalogMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.Catalog.Service.class,
-                            org.microbean.servicebroker.jackson.query.state.Catalog.ServiceMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.class,
-                            org.microbean.servicebroker.jackson.query.state.Catalog.Service.PlanMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.Catalog.Service.DashboardClient.class,
-                            org.microbean.servicebroker.jackson.query.state.Catalog.Service.DashboardClientMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.class,
-                            org.microbean.servicebroker.jackson.query.state.Catalog.Service.Plan.SchemaMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding.class,
-                            org.microbean.servicebroker.jackson.query.state.Catalog.Service.Plan.Schema.ServiceBindingMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceInstance.class,
-                            org.microbean.servicebroker.jackson.query.state.Catalog.Service.Plan.Schema.ServiceInstanceMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters.class,
-                            org.microbean.servicebroker.jackson.query.state.Catalog.Service.Plan.Schema.InputParametersMixin.class);
-  }
+    this.setMixInAnnotation(Catalog.class, CatalogMixin.class);
+    this.setMixInAnnotation(DashboardClient.class, DashboardClientMixin.class);
+    this.setMixInAnnotation(InputParameters.class, InputParametersMixin.class);
+    this.setMixInAnnotation(Plan.class, PlanMixin.class);
+    this.setMixInAnnotation(Schema.class, SchemaMixin.class);
+    this.setMixInAnnotation(Service.class, ServiceMixin.class);
+    this.setMixInAnnotation(ServiceBinding.class, ServiceBindingMixin.class);
+    this.setMixInAnnotation(ServiceInstance.class, ServiceInstanceMixin.class);
 
-  
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.DeleteBindingCommand.Response.class,
+                            org.microbean.servicebroker.jackson.command.DeleteBindingCommand.ResponseMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.DeleteServiceInstanceCommand.Response.class,
+                            org.microbean.servicebroker.jackson.command.DeleteServiceInstanceCommand.ResponseMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionBindingCommand.BindResource.class,
+                            org.microbean.servicebroker.jackson.command.ProvisionBindingCommand.BindResourceMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionBindingCommand.Response.class,
+                            org.microbean.servicebroker.jackson.command.ProvisionBindingCommand.ResponseMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionServiceInstanceCommand.Response.class,
+                            org.microbean.servicebroker.jackson.command.ProvisionServiceInstanceCommand.ResponseMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.PreviousValues.class,
+                            org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.PreviousValuesMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.Response.class,
+                            org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.ResponseMixin.class);
+  }
   
 }

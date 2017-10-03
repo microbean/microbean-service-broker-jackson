@@ -22,11 +22,11 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-abstract class ProvisionServiceInstanceCommand {
+public abstract class ProvisionServiceInstanceCommand {
 
   @JsonInclude(content = JsonInclude.Include.NON_NULL, value = JsonInclude.Include.NON_EMPTY)
   @JsonNaming(SnakeCaseStrategy.class)
-  static class ResponseMixin {
+  public static class ResponseMixin {
     
   }
 

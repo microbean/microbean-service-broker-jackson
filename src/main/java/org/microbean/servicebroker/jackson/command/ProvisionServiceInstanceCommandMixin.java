@@ -32,17 +32,17 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
 @JsonNaming(SnakeCaseStrategy.class)
 @JsonPropertyOrder({ "instance_id", "service_id", "plan_id", "context", "accepts_incomplete", "organization_guid", "space_guid", "parameters" })
-abstract class ProvisionServiceInstanceCommandMixin {
+public abstract class ProvisionServiceInstanceCommandMixin {
 
   @JsonCreator
-  ProvisionServiceInstanceCommandMixin(@JsonProperty("instance_id") final String instanceId,
-                                       @JsonProperty("service_id") final String serviceId,
-                                       @JsonProperty("plan_id") final String planId,
-                                       @JsonProperty("context") final Map<? extends String, ?> context,
-                                       @JsonProperty("accepts_incomplete") final boolean acceptsIncomplete,
-                                       @JsonProperty("organization_guid") final String organizationGuid,
-                                       @JsonProperty("space_guid") final String spaceGuid,
-                                       @JsonProperty("parameters") final Map<? extends String, ? extends Object> parameters) {
+  private ProvisionServiceInstanceCommandMixin(@JsonProperty("instance_id") final String instanceId,
+                                               @JsonProperty("service_id") final String serviceId,
+                                               @JsonProperty("plan_id") final String planId,
+                                               @JsonProperty("context") final Map<? extends String, ?> context,
+                                               @JsonProperty("accepts_incomplete") final boolean acceptsIncomplete,
+                                               @JsonProperty("organization_guid") final String organizationGuid,
+                                               @JsonProperty("space_guid") final String spaceGuid,
+                                               @JsonProperty("parameters") final Map<? extends String, ? extends Object> parameters) {
     super();
   }
 
