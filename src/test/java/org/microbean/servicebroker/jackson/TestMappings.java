@@ -415,6 +415,7 @@ public class TestMappings {
     listing.put("blurb", "Add a blurb here");
     listing.put("longDescription", "A long time ago, in a galaxy far far away...");
     metadata.put("listing", listing);
+    metadata.put("displayName", "The Fake Broker");
     final Set<String> tags = new LinkedHashSet<>();
     tags.add("no-sql");
     tags.add("relational");

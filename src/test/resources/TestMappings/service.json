@@ -2,8 +2,8 @@
   "name" : "fake-service",
   "id" : "acb56d7c-XXXX-XXXX-XXXX-feb140a59a66",
   "description" : "fake service",
-  "tags" : ["no-sql", "relational"],
-  "requires" : ["route_forwarding"],
+  "tags" : [ "no-sql", "relational" ],
+  "requires" : [ "route_forwarding" ],
   "bindable" : true,
   "metadata" : {
     "provider" : {
