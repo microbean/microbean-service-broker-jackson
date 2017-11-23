@@ -61,7 +61,7 @@ public class ServiceBrokerModule extends SimpleModule {
     this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionBindingCommand.class, org.microbean.servicebroker.jackson.command.ProvisionBindingCommandMixin.class);
     this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionServiceInstanceCommand.class, org.microbean.servicebroker.jackson.command.ProvisionServiceInstanceCommandMixin.class);
     this.setMixInAnnotation(org.microbean.servicebroker.api.command.ProvisionServiceInstanceCommand.Response.class, org.microbean.servicebroker.jackson.command.ProvisionServiceInstanceCommand.ResponseMixin.class);
-        this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommandMixin.class);
+    this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommandMixin.class);
     this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.PreviousValues.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.PreviousValuesMixin.class);
     this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.Response.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.ResponseMixin.class);
     this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.LastOperation.class, org.microbean.servicebroker.jackson.query.state.LastOperationMixin.class);
