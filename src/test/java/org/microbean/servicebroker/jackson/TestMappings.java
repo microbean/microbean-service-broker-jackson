@@ -744,7 +744,7 @@ public class TestMappings {
     assertNotNull(parameters);
     assertEquals("bar", parameters.get("foo"));
   }
-
+  
   @Test
   public void testWriteProvisionServiceInstanceCommand() throws IOException {
     final ProvisionServiceInstanceCommand provisionServiceInstanceCommand = createProvisionServiceInstanceCommand();

@@ -36,8 +36,8 @@ public abstract class ProvisionServiceInstanceCommandMixin {
 
   @JsonCreator
   private ProvisionServiceInstanceCommandMixin(@JsonProperty("instance_id") final String instanceId,
-                                               @JsonProperty("service_id") final String serviceId,
-                                               @JsonProperty("plan_id") final String planId,
+                                               @JsonProperty(required = true, value = "service_id") final String serviceId,
+                                               @JsonProperty(required = true, value = "plan_id") final String planId,
                                                @JsonProperty("context") final Map<? extends String, ?> context,
                                                @JsonProperty("accepts_incomplete") final boolean acceptsIncomplete,
                                                @JsonProperty("organization_guid") final String organizationGuid,
