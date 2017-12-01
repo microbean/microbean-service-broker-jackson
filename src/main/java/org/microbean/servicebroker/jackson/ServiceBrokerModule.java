@@ -18,7 +18,6 @@ package org.microbean.servicebroker.jackson;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import org.microbean.servicebroker.api.query.LastOperationQuery;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.DashboardClient;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.InputParameters;
 import org.microbean.servicebroker.api.query.state.Catalog.Service.Plan.Schema.ServiceBinding;
@@ -65,7 +64,6 @@ public class ServiceBrokerModule extends SimpleModule {
     this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.PreviousValues.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.PreviousValuesMixin.class);
     this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.Response.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommand.ResponseMixin.class);
     this.setMixInAnnotation(org.microbean.servicebroker.api.command.UpdateServiceInstanceCommand.class, org.microbean.servicebroker.jackson.command.UpdateServiceInstanceCommandMixin.class);
-    this.setMixInAnnotation(org.microbean.servicebroker.api.query.LastOperationQuery.class, org.microbean.servicebroker.jackson.query.LastOperationQueryMixin.class);
     this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.LastOperation.State.class, org.microbean.servicebroker.jackson.query.state.LastOperation.StateMixin.class);
     this.setMixInAnnotation(org.microbean.servicebroker.api.query.state.LastOperation.class, org.microbean.servicebroker.jackson.query.state.LastOperationMixin.class);
   }
