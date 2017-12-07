@@ -1,0 +1,3 @@
+org.microbean.servicebroker.jackson
+org.microbean.servicebroker.jackson.command
+org.microbean.servicebroker.jackson.query.state
