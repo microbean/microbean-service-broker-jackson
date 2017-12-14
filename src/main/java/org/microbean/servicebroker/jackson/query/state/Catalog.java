@@ -23,6 +23,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -43,7 +44,7 @@ public abstract class Catalog {
     super();
   }
   
-  @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
+  @JsonInclude(content = Include.NON_EMPTY, value = Include.NON_EMPTY)
   @JsonNaming(SnakeCaseStrategy.class)
   @JsonPropertyOrder({ "name", "id", "description", "tags", "requires", "bindable", "metadata", "dashboard_client", "plan_updateable", "plans" })
   public static abstract class ServiceMixin {
@@ -69,7 +70,7 @@ public abstract class Catalog {
 
   public static abstract class Service {
     
-    @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
+    @JsonInclude(content = Include.NON_EMPTY, value = Include.NON_EMPTY)
     @JsonNaming(SnakeCaseStrategy.class)
     @JsonPropertyOrder({ "id", "secret", "redirect_uri" })
     public static abstract class DashboardClientMixin {
@@ -93,7 +94,7 @@ public abstract class Catalog {
 
       public static abstract class Schema {
 
-        @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
+        @JsonInclude(content = Include.NON_EMPTY, value = Include.NON_EMPTY)
         @JsonNaming(SnakeCaseStrategy.class)
         @JsonPropertyOrder({ "create", "update" })
         public static abstract class ServiceInstanceMixin {
@@ -107,7 +108,7 @@ public abstract class Catalog {
           
         }
 
-        @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
+        @JsonInclude(content = Include.NON_EMPTY, value = Include.NON_EMPTY)
         @JsonNaming(SnakeCaseStrategy.class)
         @JsonPropertyOrder({ "create" })
         public static abstract class ServiceBindingMixin {
@@ -119,7 +120,7 @@ public abstract class Catalog {
           
         }
         
-        @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
+        @JsonInclude(content = Include.NON_EMPTY, value = Include.NON_EMPTY)
         @JsonNaming(SnakeCaseStrategy.class)
         @JsonPropertyOrder({ "parameters" })
         public static abstract class InputParametersMixin {
@@ -133,7 +134,7 @@ public abstract class Catalog {
         
       }
 
-      @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
+      @JsonInclude(content = Include.NON_EMPTY, value = Include.NON_EMPTY)
       @JsonNaming(SnakeCaseStrategy.class)
       @JsonPropertyOrder({ "service_instance", "service_binding" })
       public static abstract class SchemaMixin {
@@ -148,7 +149,7 @@ public abstract class Catalog {
       
     }
     
-    @JsonInclude(content = JsonInclude.Include.NON_EMPTY, value = JsonInclude.Include.NON_EMPTY)
+    @JsonInclude(content = Include.NON_EMPTY, value = Include.NON_EMPTY)
     @JsonNaming(SnakeCaseStrategy.class)
     @JsonPropertyOrder({ "name", "id", "description", "free", "metadata", "bindable", "schemas" })
     public static abstract class PlanMixin {
@@ -163,6 +164,9 @@ public abstract class Catalog {
                         @JsonProperty("schemas") final Schema schemas) {
         super();
       }
+
+      @JsonInclude(content = Include.NON_EMPTY)
+      abstract Map<? extends String, ?> getMetadata();
       
     }
     
